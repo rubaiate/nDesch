@@ -1,4 +1,4 @@
-package com.nde.sch;
+package com.nde.sch.TimeScheduleEverySecond;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -17,7 +17,7 @@ class TimeScheduleRunTest {
     @Test
     void contextLoads() throws InterruptedException {
         Assertions.assertFalse(testComponent.countDownLatch.await(1000, TimeUnit.MILLISECONDS));
-        Assertions.assertTrue(testComponent.countDownLatch.await(4000, TimeUnit.MILLISECONDS));
+        Assertions.assertTrue(testComponent.countDownLatch.await(1500, TimeUnit.MILLISECONDS));
     }
 
 }

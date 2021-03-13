@@ -1,5 +1,6 @@
-package com.nde.sch;
+package com.nde.sch.TimeScheduleEverySecond;
 
+import com.nde.sch.ScheduleEntity;
 import com.nde.sch.enums.ScheduleAction;
 import com.nde.sch.enums.TriggerType;
 import org.springframework.batch.core.Job;
@@ -36,7 +37,7 @@ public class TimedScheduleTestComponent {
             @Override
             protected void doExecute(StepExecution stepExecution) {
                 countDownLatch.countDown();
-                System.out.println("Executing " + this.getName());
+                System.out.println(String.format("Executing %s. CountDown %d", this.getName(), countDownLatch.getCount()));
             }
         };
         step.setName("Step1");
