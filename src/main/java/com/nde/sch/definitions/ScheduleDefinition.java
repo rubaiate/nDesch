@@ -1,12 +1,13 @@
 package com.nde.sch.definitions;
 
 import com.nde.sch.ScheduleEntity;
-import org.springframework.batch.core.Job;
+import com.nde.sch.ScheduleJob;
 
 public class ScheduleDefinition {
     private ScheduleEntity scheduleEntity;
-    private Job job;
-    public ScheduleDefinition(ScheduleEntity scheduleEntity, Job job) {
+    private ScheduleJob job;
+
+    public ScheduleDefinition(ScheduleEntity scheduleEntity, ScheduleJob job) {
         this.scheduleEntity = scheduleEntity;
         this.job = job;
     }
@@ -19,7 +20,7 @@ public class ScheduleDefinition {
         return scheduleEntity.getJobName();
     }
 
-    public Job getJob() {
+    public ScheduleJob getJob() {
         return job;
     }
 }

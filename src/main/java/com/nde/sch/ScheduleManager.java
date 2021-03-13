@@ -2,12 +2,6 @@ package com.nde.sch;
 
 import com.nde.sch.context.ScheduleContext;
 import com.nde.sch.definitions.TimedScheduleDefinition;
-import org.springframework.batch.core.JobParameters;
-import org.springframework.batch.core.JobParametersInvalidException;
-import org.springframework.batch.core.launch.JobLauncher;
-import org.springframework.batch.core.repository.JobExecutionAlreadyRunningException;
-import org.springframework.batch.core.repository.JobInstanceAlreadyCompleteException;
-import org.springframework.batch.core.repository.JobRestartException;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
@@ -23,13 +17,11 @@ import java.util.concurrent.ScheduledFuture;
 @Service
 public class ScheduleManager implements ApplicationListener<ApplicationReadyEvent> {
     private final ScheduleContext scheduleContext;
-    private final JobLauncher jobLauncher;
     private final ThreadPoolTaskScheduler taskScheduler;
     private final Map<String, ScheduledFuture<?>> jobScheduledFutures = new ConcurrentHashMap<>();
 
-    public ScheduleManager(ScheduleContext scheduleContext, JobLauncher jobLauncher, ThreadPoolTaskScheduler taskScheduler) {
+    public ScheduleManager(ScheduleContext scheduleContext, ThreadPoolTaskScheduler taskScheduler) {
         this.scheduleContext = scheduleContext;
-        this.jobLauncher = jobLauncher;
         this.taskScheduler = taskScheduler;
     }
 
@@ -53,12 +45,7 @@ public class ScheduleManager implements ApplicationListener<ApplicationReadyEven
         ScheduledFuture<?> future = taskScheduler.schedule(new TimerTask() {
             @Override
             public void run() {
-                try {
-                    jobLauncher.run(scheduleDefinition.getJob(), new JobParameters());
-                } catch (JobExecutionAlreadyRunningException | JobRestartException | JobInstanceAlreadyCompleteException | JobParametersInvalidException e) {
-                    //TODO handle exception properly
-                    e.printStackTrace();
-                }
+                scheduleDefinition.getJob().run();
             }
         }, new CronTrigger(scheduleDefinition.getTimeExpression(), TimeZone.getTimeZone(scheduleDefinition.getTimeZone())));
         jobScheduledFutures.put(scheduleDefinition.getId(), future);

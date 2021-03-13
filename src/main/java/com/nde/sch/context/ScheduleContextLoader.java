@@ -1,11 +1,11 @@
 package com.nde.sch.context;
 
 import com.nde.sch.ScheduleEntity;
+import com.nde.sch.ScheduleJob;
 import com.nde.sch.definitions.DependentScheduleDefinition;
 import com.nde.sch.definitions.ScheduleDefinition;
 import com.nde.sch.definitions.TimedScheduleDefinition;
 import com.nde.sch.enums.TriggerType;
-import org.springframework.batch.core.Job;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 
@@ -20,8 +20,8 @@ import static com.nde.sch.enums.ParameterKeys.*;
 public class ScheduleContextLoader {
     private final ScheduleContext context;
 
-    public ScheduleContextLoader(List<ScheduleEntity> scheduleEntities, List<Job> jobList) {
-        var jobs = jobList.stream().collect(Collectors.toMap(Job::getName, job -> job));
+    public ScheduleContextLoader(List<ScheduleEntity> scheduleEntities, List<ScheduleJob> jobList) {
+        var jobs = jobList.stream().collect(Collectors.toMap(ScheduleJob::getName, job -> job));
 
         List<ScheduleEntity> timeScheduleEntities = filterSchedules(scheduleEntities, TriggerType.TIMED);
         var timedSchedules = createTimedSchedules(timeScheduleEntities, jobs);
@@ -46,7 +46,7 @@ public class ScheduleContextLoader {
         return context;
     }
 
-    private Map<String, TimedScheduleDefinition> createTimedSchedules(List<ScheduleEntity> scheduleEntities, Map<String, Job> jobs) {
+    private Map<String, TimedScheduleDefinition> createTimedSchedules(List<ScheduleEntity> scheduleEntities, Map<String, ScheduleJob> jobs) {
         return scheduleEntities.stream()
                 .map(entity -> new TimedScheduleDefinition(entity,
                         jobs.get(entity.getJobName()),
@@ -55,7 +55,7 @@ public class ScheduleContextLoader {
                 .collect(Collectors.toMap(ScheduleDefinition::getId, def -> def));
     }
 
-    private Map<String, DependentScheduleDefinition> createDependentSchedules(List<ScheduleEntity> scheduleEntities, Map<String, Job> jobs) {
+    private Map<String, DependentScheduleDefinition> createDependentSchedules(List<ScheduleEntity> scheduleEntities, Map<String, ScheduleJob> jobs) {
         return scheduleEntities.stream()
                 .map(entity -> new DependentScheduleDefinition(entity,
                         jobs.get(entity.getJobName()),
