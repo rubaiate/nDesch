@@ -14,14 +14,18 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.scheduling.support.CronTrigger;
 import org.springframework.stereotype.Service;
 
+import java.util.Map;
 import java.util.TimeZone;
 import java.util.TimerTask;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ScheduledFuture;
 
 @Service
 public class ScheduleManager implements ApplicationListener<ApplicationReadyEvent> {
     private final ScheduleContext scheduleContext;
     private final JobLauncher jobLauncher;
     private final ThreadPoolTaskScheduler taskScheduler;
+    private final Map<String, ScheduledFuture<?>> jobScheduledFutures = new ConcurrentHashMap<>();
 
     public ScheduleManager(ScheduleContext scheduleContext, JobLauncher jobLauncher, ThreadPoolTaskScheduler taskScheduler) {
         this.scheduleContext = scheduleContext;
@@ -29,12 +33,24 @@ public class ScheduleManager implements ApplicationListener<ApplicationReadyEven
         this.taskScheduler = taskScheduler;
     }
 
+    public boolean cancelTimeSchedule(String jobId) {
+        ScheduledFuture<?> future = jobScheduledFutures.get(jobId);
+        if (future != null) {
+            boolean result = future.cancel(true);
+            if (result) {
+                jobScheduledFutures.remove(jobId);
+            }
+            return result;
+        }
+        return false;
+    }
+
     private void scheduleTimeSchedules() {
         scheduleContext.getTimedSchedules().values().forEach(this::schedule);
     }
 
     private void schedule(TimedScheduleDefinition scheduleDefinition) {
-        taskScheduler.schedule(new TimerTask() {
+        ScheduledFuture<?> future = taskScheduler.schedule(new TimerTask() {
             @Override
             public void run() {
                 try {
@@ -45,6 +61,7 @@ public class ScheduleManager implements ApplicationListener<ApplicationReadyEven
                 }
             }
         }, new CronTrigger(scheduleDefinition.getTimeExpression(), TimeZone.getTimeZone(scheduleDefinition.getTimeZone())));
+        jobScheduledFutures.put(scheduleDefinition.getId(), future);
     }
 
     @Override

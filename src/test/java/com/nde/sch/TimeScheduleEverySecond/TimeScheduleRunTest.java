@@ -5,11 +5,13 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.test.annotation.DirtiesContext;
 
 import java.util.concurrent.TimeUnit;
 
 @SpringBootTest
 @EnableScheduling
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 class TimeScheduleRunTest {
     @Autowired
     TimedScheduleTestComponent testComponent;
