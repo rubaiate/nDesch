@@ -1,4 +1,4 @@
-package com.nde.sch.TimeScheduleEverySecond;
+package com.nde.sch.timescheduleeverysecond;
 
 import com.nde.sch.ScheduleEntity;
 import com.nde.sch.enums.ScheduleAction;
@@ -10,8 +10,8 @@ import org.springframework.batch.core.configuration.annotation.JobBuilderFactory
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.AbstractStep;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.TestComponent;
 import org.springframework.context.annotation.Bean;
-import org.springframework.stereotype.Component;
 
 import java.util.Collections;
 import java.util.List;
@@ -21,7 +21,7 @@ import java.util.concurrent.CountDownLatch;
 import static com.nde.sch.enums.ParameterKeys.SCHEDULE_EXPRESSION;
 import static com.nde.sch.enums.ParameterKeys.TIME_ZONE;
 
-@Component
+@TestComponent
 public class TimedScheduleTestComponent {
     @Autowired
     private JobBuilderFactory jobs;

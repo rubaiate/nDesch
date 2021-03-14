@@ -1,15 +1,17 @@
-package com.nde.sch.TimeScheduleEverySecond;
+package com.nde.sch.timescheduleeverysecond;
 
 import com.nde.sch.schedulerunner.TimeScheduleRunner;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.test.annotation.DirtiesContext;
 
 @SpringBootTest
 @EnableScheduling
+@Import(TimedScheduleTestComponent.class)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 class TimeScheduleCancelTest {
     @Autowired

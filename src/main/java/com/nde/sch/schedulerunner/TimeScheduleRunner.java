@@ -1,12 +1,10 @@
 package com.nde.sch.schedulerunner;
 
-import com.nde.sch.ScheduleEvent;
+import com.nde.sch.ScheduleService;
 import com.nde.sch.context.ScheduleContext;
 import com.nde.sch.definitions.TimedScheduleDefinition;
-import com.nde.sch.enums.ScheduleStatus;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
-import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.context.ApplicationListener;
+import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.scheduling.support.CronTrigger;
 import org.springframework.stereotype.Service;
@@ -18,17 +16,19 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledFuture;
 
 @Service
-public class TimeScheduleRunner implements ApplicationListener<ApplicationReadyEvent> {
+public class TimeScheduleRunner {
     private final ScheduleContext scheduleContext;
     private final ThreadPoolTaskScheduler taskScheduler;
-    private final ApplicationEventPublisher applicationEventPublisher;
+    private final ScheduleService scheduleService;
 
     private final Map<String, ScheduledFuture<?>> jobScheduledFutures = new ConcurrentHashMap<>();
 
-    public TimeScheduleRunner(ScheduleContext scheduleContext, ThreadPoolTaskScheduler taskScheduler, ApplicationEventPublisher applicationEventPublisher) {
+    public TimeScheduleRunner(ScheduleContext scheduleContext,
+                              ThreadPoolTaskScheduler taskScheduler,
+                              ScheduleService scheduleService) {
         this.scheduleContext = scheduleContext;
         this.taskScheduler = taskScheduler;
-        this.applicationEventPublisher = applicationEventPublisher;
+        this.scheduleService = scheduleService;
     }
 
     public boolean cancelTimeSchedule(String jobId) {
@@ -43,24 +43,26 @@ public class TimeScheduleRunner implements ApplicationListener<ApplicationReadyE
         return false;
     }
 
+    @EventListener
+    private void onApplicationEvent(ApplicationReadyEvent applicationReadyEvent) {
+        scheduleTimeSchedules();
+    }
+
     private void scheduleTimeSchedules() {
         scheduleContext.getTimedSchedules().values().forEach(this::schedule);
     }
 
     private void schedule(TimedScheduleDefinition scheduleDefinition) {
+        if (!scheduleDefinition.getScheduleEntity().getEnabled()) {
+            return;
+        }
+
         var future = taskScheduler.schedule(new TimerTask() {
             @Override
             public void run() {
-                applicationEventPublisher.publishEvent(new ScheduleEvent(this, scheduleDefinition, ScheduleStatus.RUNNING));
-                scheduleDefinition.getJob().run();
-                applicationEventPublisher.publishEvent(new ScheduleEvent(this, scheduleDefinition, ScheduleStatus.SUCCESSFUL));
+                scheduleService.run(scheduleDefinition);
             }
         }, new CronTrigger(scheduleDefinition.getTimeExpression(), TimeZone.getTimeZone(scheduleDefinition.getTimeZone())));
         jobScheduledFutures.put(scheduleDefinition.getId(), future);
-    }
-
-    @Override
-    public void onApplicationEvent(ApplicationReadyEvent applicationReadyEvent) {
-        scheduleTimeSchedules();
     }
 }

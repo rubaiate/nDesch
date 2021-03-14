@@ -2,9 +2,11 @@ package com.nde.sch.definitions;
 
 import com.nde.sch.ScheduleEntity;
 import com.nde.sch.ScheduleJob;
+import lombok.Getter;
 import lombok.ToString;
 
 @ToString
+@Getter
 public class ScheduleDefinition {
     private final ScheduleEntity scheduleEntity;
     private final ScheduleJob job;
@@ -22,7 +24,4 @@ public class ScheduleDefinition {
         return scheduleEntity.getJobName();
     }
 
-    public ScheduleJob getJob() {
-        return job;
-    }
 }
