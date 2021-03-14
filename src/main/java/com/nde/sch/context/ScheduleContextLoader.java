@@ -29,10 +29,14 @@ public class ScheduleContextLoader {
         List<ScheduleEntity> dependentScheduleEntities = filterSchedules(scheduleEntities, TriggerType.DEPENDENT);
         var dependentSchedules = createDependentSchedules(dependentScheduleEntities, jobs);
 
+        var dependencyMap = dependentSchedules.values().stream()
+                .collect(Collectors.groupingBy(DependentScheduleDefinition::getDependentScheduleId));
+
+
         var schedules = new HashMap<String, ScheduleDefinition>();
         schedules.putAll(timedSchedules);
         schedules.putAll(dependentSchedules);
-        context = new ScheduleContext(jobs, schedules, timedSchedules, dependentSchedules);
+        context = new ScheduleContext(jobs, schedules, timedSchedules, dependentSchedules, dependencyMap);
     }
 
     private List<ScheduleEntity> filterSchedules(List<ScheduleEntity> scheduleEntities, TriggerType triggerType) {

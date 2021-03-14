@@ -3,8 +3,10 @@ package com.nde.sch.definitions;
 import com.nde.sch.ScheduleEntity;
 import com.nde.sch.ScheduleJob;
 import lombok.Getter;
+import lombok.ToString;
 
 @Getter
+@ToString
 public class TimedScheduleDefinition extends ScheduleDefinition {
     private final String timeExpression;
     private final String timeZone;

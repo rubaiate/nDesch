@@ -2,10 +2,12 @@ package com.nde.sch.definitions;
 
 import com.nde.sch.ScheduleEntity;
 import com.nde.sch.ScheduleJob;
+import lombok.ToString;
 
+@ToString
 public class ScheduleDefinition {
-    private ScheduleEntity scheduleEntity;
-    private ScheduleJob job;
+    private final ScheduleEntity scheduleEntity;
+    private final ScheduleJob job;
 
     public ScheduleDefinition(ScheduleEntity scheduleEntity, ScheduleJob job) {
         this.scheduleEntity = scheduleEntity;
