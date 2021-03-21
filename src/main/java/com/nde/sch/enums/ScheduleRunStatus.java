@@ -1,6 +1,6 @@
 package com.nde.sch.enums;
 
-public enum ScheduleStatus {
+public enum ScheduleRunStatus {
     NOT_STARTED,
     RUNNING,
     SUCCESSFUL,

@@ -1,8 +1,8 @@
 package com.nde.sch.schedulerunner;
 
-import com.nde.sch.ScheduleService;
 import com.nde.sch.context.ScheduleContext;
 import com.nde.sch.definitions.TimedScheduleDefinition;
+import com.nde.sch.service.ScheduleService;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;

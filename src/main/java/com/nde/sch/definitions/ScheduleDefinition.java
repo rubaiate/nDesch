@@ -2,6 +2,7 @@ package com.nde.sch.definitions;
 
 import com.nde.sch.ScheduleEntity;
 import com.nde.sch.ScheduleJob;
+import com.nde.sch.enums.TriggerType;
 import lombok.Getter;
 import lombok.ToString;
 
@@ -22,6 +23,10 @@ public class ScheduleDefinition {
 
     public String getJobName() {
         return scheduleEntity.getJobName();
+    }
+
+    public TriggerType getTriggerType() {
+        return scheduleEntity.getTriggerType();
     }
 
 }

@@ -1,6 +1,6 @@
 package com.nde.sch.dependentschedule;
 
-import com.nde.sch.ScheduleService;
+import com.nde.sch.service.ScheduleService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,8 +1,8 @@
 package com.nde.sch.schedulerunner;
 
 import com.nde.sch.ScheduleEvent;
-import com.nde.sch.ScheduleService;
 import com.nde.sch.context.ScheduleContext;
+import com.nde.sch.service.ScheduleService;
 import lombok.AllArgsConstructor;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
@@ -20,7 +20,7 @@ public class DependentScheduleRunner {
         System.out.println(scheduleEvent);
 
         var dependentScheduleDefinitions = scheduleContext.getDependencyMap()
-                .getOrDefault(scheduleEvent.getScheduleDefinition().getId(), Collections.emptyList());
+                .getOrDefault(scheduleEvent.getScheduleStatus().getId(), Collections.emptyList());
 
         dependentScheduleDefinitions.forEach(scheduleService::run);
     }
